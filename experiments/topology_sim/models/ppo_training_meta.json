@@ -1,0 +1,36 @@
+{
+  "model_type": "MaskablePPO",
+  "model_path": "experiments\\topology_sim\\models\\ppo_topology_model.zip",
+  "seed": 0,
+  "total_timesteps": 300000,
+  "sim_config": {
+    "num_nodes": 50,
+    "num_potential_users": 100,
+    "avg_candidate_nodes": 5,
+    "slot_minutes": 1,
+    "sim_days": 3,
+    "bandwidth_mbps": 100.0,
+    "sla_ms": 50.0,
+    "node_cost_cny_per_hour": 5.35,
+    "lambda_per_hour": 8.0,
+    "tier_l_ratio": 0.6,
+    "tier_h_ratio": 0.4,
+    "session_hours_range": [
+      1.0,
+      3.0
+    ],
+    "gpu_tflops": 31.2,
+    "decision_timeout_ms": 50,
+    "python_policy_url": "http://127.0.0.1:8000/act",
+    "local_regression": {
+      "a0": 0.0,
+      "a1": 20.0,
+      "a2": 1.5,
+      "a3": 8.0,
+      "a4": 1.0,
+      "alpha": 1.0,
+      "beta": 0.8,
+      "gamma": 0.2
+    }
+  }
+}

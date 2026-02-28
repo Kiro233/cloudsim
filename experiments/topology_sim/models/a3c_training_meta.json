@@ -1,0 +1,16 @@
+{
+  "model_path": "experiments\\topology_sim\\models\\a3c_topology_model.pt",
+  "algorithm": "A3C",
+  "seed": 0,
+  "total_steps": 300000,
+  "log_file": "experiments\\topology_sim\\models\\a3c_training_log.csv",
+  "log_schema": [
+    "step",
+    "algorithm",
+    "reward",
+    "loss",
+    "epsilon",
+    "beta",
+    "replay_size"
+  ]
+}
