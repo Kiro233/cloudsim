@@ -1,96 +1,94 @@
-Running the CloudSim examples
------------------------------
+运行 CloudSim 示例
+-----------------
 
-To run the CloudSim examples you need to do the following steps.
+要运行 CloudSim 示例，您需要执行以下步骤：
 
-In Windows:
+在 Windows 中：
 
-1. cd <PATH TO CLOUDSIM PACKAGE>\jars
-2. java -classpath cloudsim-<VERSION>.jar;cloudsim-examples-<VERSION>.jar org.cloudbus.cloudsim.examples.CloudSimExample<EXAMPLE NUMBER>
+1. cd <CLOUDSIM 包路径>\jars
+2. java -classpath cloudsim-<版本>.jar;cloudsim-examples-<版本>.jar org.cloudbus.cloudsim.examples.CloudSimExample<示例编号>
 
-In Unix/Linux:
+在 Unix/Linux 中：
 
-1. cd <PATH TO CLOUDSIM PACKAGE>/jars
-2. java -classpath cloudsim-<VERSION>.jar:cloudsim-examples-<VERSION>.jar org.cloudbus.cloudsim.examples.CloudSimExample<EXAMPLE NUMBER>
+1. cd <CLOUDSIM 包路径>/jars
+2. java -classpath cloudsim-<版本>.jar:cloudsim-examples-<版本>.jar org.cloudbus.cloudsim.examples.CloudSimExample<示例编号>
 
-Where you need to replace:
+您需要替换：
 
-<PATH TO CLOUDSIM PACKAGE> - by the path to a directory where you have unpacked the CloudSim package
-<VERSION> - by the version of the downloaded CloudSim package
-<EXAMPLE NUMBER> - by the of number of the example you want to run
-
-
-CloudSim examples source code
------------------------------
-
-You can find the source code of the examples in <PATH TO CLOUDSIM PACKAGE>/examples/org/cloudbus/cloudsim/examples/
+<CLOUDSIM 包路径> - 您解压 CloudSim 包的目录路径
+<版本> - 下载的 CloudSim 包的版本
+<示例编号> - 您要运行的示例的编号
 
 
-Compiling and running examples
-------------------------------
+CloudSim 示例源代码
+-----------------
 
-To compile and run an example (let's say org.cloudbus.cloudsim.examples.CloudSimExample1) you need to do the following steps:
-
-In Windows:
-
-1. cd <PATH TO CLOUDSIM PACKAGE>
-2. javac -classpath jars\cloudsim-<VERSION>.jar;examples examples\org\cloudbus\cloudsim\examples\CloudSimExample1.java
-3. java -classpath jars\cloudsim-<VERSION>.jar;examples org.cloudbus.cloudsim.examples.CloudSimExample1
-
-In Unix/Linux:
-
-1. cd <PATH TO CLOUDSIM PACKAGE>
-2. javac -classpath jars/cloudsim-<VERSION>.jar:examples examples/org/cloudbus/cloudsim/examples/CloudSimExample1.java
-3. java -classpath jars/cloudsim-<VERSION>.jar:examples org.cloudbus.cloudsim.examples.CloudSimExample1
+您可以在 <CLOUDSIM 包路径>/examples/org/cloudbus/cloudsim/examples/ 中找到示例的源代码
 
 
-Compiling and running examples from the power package
------------------------------------------------------
+编译和运行示例
+---------------
 
-To compile and run an example (let's say org.cloudbus.cloudsim.examples.power.planetlab.LrMc) you need to do the following steps:
+要编译和运行示例（例如 org.cloudbus.cloudsim.examples.CloudSimExample1），您需要执行以下步骤：
 
-In Windows:
+在 Windows 中：
 
-1. Download Michael Thomas Flanagan's Java Scientific Library from http://www.ee.ucl.ac.uk/~mflanaga/java/
-2. Copy flanagan.jar to <PATH TO CLOUDSIM PACKAGE>/jars/
-3. cd <PATH TO CLOUDSIM PACKAGE>
-4. javac -classpath jars\cloudsim-<VERSION>.jar;jars\flanagan.jar;examples examples\org\cloudbus\cloudsim\examples\power\planetlab\LrMc.java
-5. java -classpath jars\cloudsim-<VERSION>.jar;jars\flanagan.jar;examples org.cloudbus.cloudsim.examples.power.planetlab.LrMc
+1. cd <CLOUDSIM 包路径>
+2. javac -classpath jars\cloudsim-<版本>.jar;examples examples\org\cloudbus\cloudsim\examples\CloudSimExample1.java
+3. java -classpath jars\cloudsim-<版本>.jar;examples org.cloudbus.cloudsim.examples.CloudSimExample1
 
-In Unix/Linux:
+在 Unix/Linux 中：
 
-1. cd <PATH TO CLOUDSIM PACKAGE>
+1. cd <CLOUDSIM 包路径>
+2. javac -classpath jars/cloudsim-<版本>.jar:examples examples/org/cloudbus/cloudsim/examples/CloudSimExample1.java
+3. java -classpath jars/cloudsim-<版本>.jar:examples org.cloudbus.cloudsim.examples.CloudSimExample1
+
+
+编译和运行 power 包中的示例
+--------------------------
+
+要编译和运行示例（例如 org.cloudbus.cloudsim.examples.power.planetlab.LrMc），您需要执行以下步骤：
+
+在 Windows 中：
+
+1. 从 http://www.ee.ucl.ac.uk/~mflanaga/java/ 下载 Michael Thomas Flanagan 的 Java 科学库
+2. 将 flanagan.jar 复制到 <CLOUDSIM 包路径>/jars/
+3. cd <CLOUDSIM 包路径>
+4. javac -classpath jars\cloudsim-<版本>.jar;jars\flanagan.jar;examples examples\org\cloudbus\cloudsim\examples\power\planetlab\LrMc.java
+5. java -classpath jars\cloudsim-<版本>.jar;jars\flanagan.jar;examples org.cloudbus.cloudsim.examples.power.planetlab.LrMc
+
+在 Unix/Linux 中：
+
+1. cd <CLOUDSIM 包路径>
 2. chmod +x ./install-flanagan.sh
 3. ./install-flanagan.jar
-4. javac -classpath jars/cloudsim-<VERSION>.jar:jars/flanagan.jar:examples examples/org/cloudbus/cloudsim/examples/power/planetlab/LrMc.java
-5. java -classpath jars/cloudsim-<VERSION>.jar:jars/flanagan.jar:examples org.cloudbus.cloudsim.examples.power.planetlab.LrMc
+4. javac -classpath jars/cloudsim-<版本>.jar:jars/flanagan.jar:examples examples/org/cloudbus/cloudsim/examples/power/planetlab/LrMc.java
+5. java -classpath jars/cloudsim-<版本>.jar:jars/flanagan.jar:examples org.cloudbus.cloudsim.examples.power.planetlab.LrMc
 
 
-Description of the CloudSim examples
-------------------------------------
+CloudSim 示例说明
+----------------
 
-Here is the description of what each example does:
+以下是每个示例的功能说明：
 
-CloudSimExample1.java : shows how to create a datacenter with one host and run one cloudlet on it.
+CloudSimExample1.java : 展示如何创建一个包含一个主机的数据中心，并在其上运行一个云任务。
 
-CloudSimExample2.java : shows how to create a datacenter with one host and run two cloudlets on it.
-			The cloudlets run in VMs with the same MIPS requirements. The cloudlets will take the same 
-			time to complete the execution.
+CloudSimExample2.java : 展示如何创建一个包含一个主机的数据中心，并在其上运行两个云任务。
+			云任务在具有相同 MIPS 要求的虚拟机中运行。这些云任务将花费相同的时间来完成执行。
 
-CloudSimExample3.java : shows how to create a datacenter with two hosts and run two cloudlets on it.
-			The cloudlets run in VMs with different MIPS requirements. The cloudlets will take different 
-			time to complete the execution depending on the requested VM performance.
+CloudSimExample3.java : 展示如何创建一个包含两个主机的数据中心，并在其上运行两个云任务。
+			云任务在具有不同 MIPS 要求的虚拟机中运行。根据请求的虚拟机性能，云任务将花费不同的时间来完成执行。
 
-CloudSimExample4.java : shows how to create two datacenters with one host each and run two cloudlets on them.
+CloudSimExample4.java : 展示如何创建两个各包含一个主机的数据中心，并在其上运行两个云任务。
 
-CloudSimExample5.java : shows how to create two datacenters with one host each and run cloudlets of two users on them. 
+CloudSimExample5.java : 展示如何创建两个各包含一个主机的数据中心，并在其上运行两个用户的云任务。
 
-CloudSimExample6.java : shows how to create scalable simulations.
+CloudSimExample6.java : 展示如何创建可扩展的仿真。
 
-CloudSimExample7.java : shows how to pause simulations.
+CloudSimExample7.java : 展示如何暂停仿真。
 
-CloudSimExample8.java : shows how to add entities in run time.
+CloudSimExample8.java : 展示如何在运行时添加实体。
 
-network: this package contains examples on how to run simulation with network simulation.
+network: 此包包含有关如何运行带网络仿真的示例。
 
-power: this package contains examples on how to use CloudSim's power-aware features.
+power: 此包包含有关如何使用 CloudSim 的功耗感知功能的示例。
