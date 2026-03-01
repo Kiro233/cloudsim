@@ -84,12 +84,18 @@ class TopologyDispatchEnv(gym.Env[np.ndarray, int]):
         step = 1.0 / 3.0 if tier == "L" else 1.0 / 2.0
         valid = np.zeros(self.num_nodes + 1, dtype=np.int8)
 
+        feasible_count = 0
         for i in range(self.num_nodes):
             candidate = req["candidate_mask"][i] == 1
             feasible = (node_states[i]["remaining_capacity"] - step) >= -1e-9
-            valid[i] = 1 if candidate and feasible else 0
+            is_valid = candidate and feasible
+            valid[i] = 1 if is_valid else 0
+            if is_valid:
+                feasible_count += 1
 
-        valid[self.reject_action] = 1
+        # During training, only expose `reject` when no feasible assignment exists.
+        # This prevents policy collapse to always-reject solutions.
+        valid[self.reject_action] = 1 if feasible_count == 0 else 0
         return valid
 
     def _build_obs(self, node_states: List[Dict[str, Any]], req: Dict[str, Any]) -> np.ndarray:
@@ -183,22 +189,28 @@ def train(args: argparse.Namespace) -> Path:
     env = build_env(cfg, seed=args.seed)
     eval_env = build_env(cfg, seed=args.seed + 1000)
 
+    # Single-step dispatch is closer to a contextual bandit than a long-horizon MDP.
+    # Use bandit-friendly PPO hyperparameters for better stability/generalization.
+    ppo_hyperparams = {
+        "learning_rate": 1e-4,
+        "gamma": 0.0,
+        "gae_lambda": 0.0,
+        "clip_range": 0.2,
+        "ent_coef": 0.03,
+        "vf_coef": 0.2,
+        "max_grad_norm": 0.5,
+        "n_steps": 512,
+        "batch_size": 128,
+        "n_epochs": 10,
+        "target_kl": 0.02,
+    }
+
     model = MaskablePPO(
         policy="MlpPolicy",
         env=env,
-        learning_rate=3e-4,
-        gamma=0.99,
-        gae_lambda=0.95,
-        clip_range=0.2,
-        ent_coef=0.01,
-        vf_coef=0.5,
-        max_grad_norm=0.5,
-        n_steps=2048,
-        batch_size=256,
-        n_epochs=10,
-        target_kl=0.02,
         verbose=1,
         seed=args.seed,
+        **ppo_hyperparams,
     )
 
     out_dir = Path(args.output_dir)
@@ -224,6 +236,7 @@ def train(args: argparse.Namespace) -> Path:
         "seed": args.seed,
         "total_timesteps": args.total_timesteps,
         "sim_config": asdict(cfg),
+        "ppo_hyperparams": ppo_hyperparams,
     }
     (out_dir / "ppo_training_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 

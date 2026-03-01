@@ -69,9 +69,14 @@ class TopologySampleEnv:
 
         step = 1.0 / 3.0 if tier == "L" else 1.0 / 2.0
         valid = np.zeros(self.act_dim, dtype=np.int8)
+        feasible_count = 0
         for i in range(self.num_nodes):
-            valid[i] = 1 if candidate_mask[i] == 1 and (nodes[i]["remaining_capacity"] - step) >= -1e-9 else 0
-        valid[self.num_nodes] = 1
+            is_valid = candidate_mask[i] == 1 and (nodes[i]["remaining_capacity"] - step) >= -1e-9
+            valid[i] = 1 if is_valid else 0
+            if is_valid:
+                feasible_count += 1
+        # During training, only expose reject when no feasible assignment exists.
+        valid[self.num_nodes] = 1 if feasible_count == 0 else 0
 
         ctx = {"nodes": nodes, "tier": tier}
         return obs_arr, valid, ctx

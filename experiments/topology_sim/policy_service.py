@@ -119,6 +119,14 @@ def _ppo_action(
         return decision
 
     if result.action_node_id is None:
+        # Inference safeguard: if feasible nodes exist, avoid reject collapse.
+        if valid_nodes:
+            decision = _best_fit_action(valid_nodes, node_states, tier)
+            decision["policy_info"] = {
+                "backend": "ppo",
+                "note": "ppo_reject_with_feasible_nodes_fallback_to_best_fit",
+            }
+            return decision
         return _reject_decision("ppo")
 
     return {
@@ -153,6 +161,14 @@ def _ddqn_action(
         return decision
 
     if result.action_node_id is None:
+        # Inference safeguard: if feasible nodes exist, avoid reject collapse.
+        if valid_nodes:
+            decision = _best_fit_action(valid_nodes, node_states, tier)
+            decision["policy_info"] = {
+                "backend": "ddqn",
+                "note": "ddqn_reject_with_feasible_nodes_fallback_to_best_fit",
+            }
+            return decision
         return _reject_decision("ddqn")
 
     return {
@@ -187,6 +203,14 @@ def _a3c_action(
         return decision
 
     if result.action_node_id is None:
+        # Inference safeguard: if feasible nodes exist, avoid reject collapse.
+        if valid_nodes:
+            decision = _best_fit_action(valid_nodes, node_states, tier)
+            decision["policy_info"] = {
+                "backend": "a3c",
+                "note": "a3c_reject_with_feasible_nodes_fallback_to_best_fit",
+            }
+            return decision
         return _reject_decision("a3c")
 
     return {
