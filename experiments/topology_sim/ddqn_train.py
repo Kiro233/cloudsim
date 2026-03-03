@@ -1,3 +1,11 @@
+"""DDQN 训练脚本。
+
+采用 Dueling + Double DQN + PER：
+- 与在线网络分离的目标网络稳定训练；
+- 按优先级采样提升有效样本利用率；
+- 保存日志、模型与元数据用于后续评估。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -110,6 +118,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-dir", type=str, default="experiments/topology_sim/models")
     parser.add_argument("--log-interval", type=int, default=1000)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--gamma", type=float, default=0.99)
+    parser.add_argument("--hidden-dim", type=int, default=256)
+    parser.add_argument("--head-dim", type=int, default=128)
+    parser.add_argument("--epsilon-final", type=float, default=0.05)
     return parser.parse_args()
 
 
@@ -120,15 +133,19 @@ def main() -> None:
     torch.manual_seed(args.seed)
 
     cfg = SimConfig()
-    ddqn_cfg = DdqnConfig()
+    ddqn_cfg = DdqnConfig(
+        lr=args.lr,
+        gamma=args.gamma,
+        epsilon_final=args.epsilon_final,
+    )
     env = TopologySampleEnv(cfg, seed=args.seed)
 
     obs_dim = cfg.num_nodes * 4 + 1 + cfg.num_nodes
     act_dim = cfg.num_nodes + 1
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    online = DuelingQNetwork(obs_dim, act_dim).to(device)
-    target = DuelingQNetwork(obs_dim, act_dim).to(device)
+    online = DuelingQNetwork(obs_dim, act_dim, hidden_dim=args.hidden_dim, head_dim=args.head_dim).to(device)
+    target = DuelingQNetwork(obs_dim, act_dim, hidden_dim=args.hidden_dim, head_dim=args.head_dim).to(device)
     target.load_state_dict(online.state_dict())
 
     optimizer = torch.optim.Adam(online.parameters(), lr=ddqn_cfg.lr)
@@ -238,6 +255,8 @@ def main() -> None:
                 "seed": args.seed,
                 "total_steps": args.total_steps,
                 "log_file": str(log_file),
+                "ddqn_config": asdict(ddqn_cfg),
+                "network": {"hidden_dim": args.hidden_dim, "head_dim": args.head_dim},
                 "log_schema": ["step", "algorithm", "reward", "loss", "epsilon", "beta", "replay_size"],
             },
             indent=2,

@@ -1,9 +1,28 @@
 {
-  "model_path": "experiments\\topology_sim\\models\\ddqn_topology_model.pt",
+  "model_path": "C:\\code\\cloudsim\\experiments\\topology_sim\\models\\ddqn_topology_model.pt",
   "algorithm": "DDQN",
-  "seed": 0,
+  "seed": 19,
   "total_steps": 300000,
-  "log_file": "experiments\\topology_sim\\models\\ddqn_training_log.csv",
+  "log_file": "C:\\code\\cloudsim\\experiments\\topology_sim\\models\\ddqn_training_log.csv",
+  "ddqn_config": {
+    "lr": 6e-05,
+    "gamma": 0.98,
+    "buffer_size": 200000,
+    "batch_size": 256,
+    "target_update_interval": 2000,
+    "train_freq": 4,
+    "gradient_steps": 1,
+    "epsilon_start": 1.0,
+    "epsilon_final": 0.03,
+    "epsilon_decay_portion": 0.2,
+    "per_alpha": 0.6,
+    "per_beta_start": 0.4,
+    "per_beta_final": 1.0
+  },
+  "network": {
+    "hidden_dim": 384,
+    "head_dim": 192
+  },
   "log_schema": [
     "step",
     "algorithm",

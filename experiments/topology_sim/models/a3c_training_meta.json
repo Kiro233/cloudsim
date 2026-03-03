@@ -1,9 +1,23 @@
 {
-  "model_path": "experiments\\topology_sim\\models\\a3c_topology_model.pt",
+  "model_path": "C:\\code\\cloudsim\\experiments\\topology_sim\\models\\a3c_topology_model.pt",
   "algorithm": "A3C",
-  "seed": 0,
+  "seed": 19,
   "total_steps": 300000,
-  "log_file": "experiments\\topology_sim\\models\\a3c_training_log.csv",
+  "log_file": "C:\\code\\cloudsim\\experiments\\topology_sim\\models\\a3c_training_log.csv",
+  "a3c_config": {
+    "num_workers": 10,
+    "lr": 0.0003,
+    "gamma": 0.98,
+    "t_max": 20,
+    "entropy_coef": 0.015,
+    "value_coef": 0.4,
+    "max_grad_norm": 40.0,
+    "rmsprop_alpha": 0.99,
+    "rmsprop_eps": 1e-05
+  },
+  "network": {
+    "hidden_dim": 384
+  },
   "log_schema": [
     "step",
     "algorithm",

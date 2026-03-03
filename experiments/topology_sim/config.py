@@ -1,9 +1,19 @@
+"""拓扑仿真实验的全局配置定义。
+
+本文件集中维护：
+1) 分层业务规格（L/H）；
+2) 回归基线策略参数；
+3) 仿真与训练/推理共享的核心系统参数。
+"""
+
 from dataclasses import dataclass
 from typing import Tuple
 
 
 @dataclass(frozen=True)
 class TierSpec:
+    """业务分层规格：定义单个会话在该层的资源与时延特征。"""
+
     name: str
     compute_tflops_s: float
     length_mi: int
@@ -13,6 +23,8 @@ class TierSpec:
 
 @dataclass(frozen=True)
 class LocalRegressionConfig:
+    """本地回归基线策略的参数集合。"""
+
     a0: float = 0.0
     a1: float = 20.0
     a2: float = 1.5
@@ -25,6 +37,8 @@ class LocalRegressionConfig:
 
 @dataclass(frozen=True)
 class SimConfig:
+    """拓扑仿真主配置：节点规模、业务强度、成本与SLA等参数。"""
+
     num_nodes: int = 50
     num_potential_users: int = 100
     avg_candidate_nodes: int = 5
@@ -44,13 +58,16 @@ class SimConfig:
 
     @property
     def node_cost_cny_per_minute(self) -> float:
+        """将节点小时成本换算为分钟成本，便于奖励计算。"""
         return self.node_cost_cny_per_hour / 60.0
 
     @property
     def total_slots(self) -> int:
+        """根据仿真天数与时间粒度计算总时隙数。"""
         return int(self.sim_days * 24 * 60 / self.slot_minutes)
 
 
+# L/H 两类业务规格用于环境构造、奖励计算与推理阶段特征拼接。
 TIER_L = TierSpec(
     name="L",
     compute_tflops_s=0.31758,

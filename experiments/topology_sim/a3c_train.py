@@ -1,3 +1,8 @@
+"""A3C 训练脚本。
+
+核心流程：构造采样环境 -> 多线程 worker 并行采样与更新 -> 保存模型与训练元数据。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -114,10 +119,15 @@ def worker_loop(
     stat_lock: threading.Lock,
     stats: dict[str, float],
     worker_device: torch.device,
+    hidden_dim: int,
 ) -> None:
     device = worker_device
     env = TopologySampleEnv(cfg, seed=seed + worker_id * 97)
-    local_model = ActorCriticNet(cfg.num_nodes * 4 + 1 + cfg.num_nodes, cfg.num_nodes + 1).to(device)
+    local_model = ActorCriticNet(
+        cfg.num_nodes * 4 + 1 + cfg.num_nodes,
+        cfg.num_nodes + 1,
+        hidden_dim=hidden_dim,
+    ).to(device)
 
     obs, mask, ctx = env.reset()
     x_buf = torch.empty((1, obs.shape[0]), dtype=torch.float32, device=device)
@@ -212,6 +222,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-dir", type=str, default="experiments/topology_sim/models")
     parser.add_argument("--log-interval", type=int, default=1000)
+    parser.add_argument("--lr", type=float, default=7e-4)
+    parser.add_argument("--gamma", type=float, default=0.99)
+    parser.add_argument("--entropy-coef", type=float, default=0.01)
+    parser.add_argument("--value-coef", type=float, default=0.5)
+    parser.add_argument("--num-workers", type=int, default=8)
+    parser.add_argument("--hidden-dim", type=int, default=256)
     return parser.parse_args()
 
 
@@ -222,12 +238,18 @@ def main() -> None:
     torch.manual_seed(args.seed)
 
     cfg = SimConfig()
-    a3c_cfg = A3cConfig()
+    a3c_cfg = A3cConfig(
+        num_workers=args.num_workers,
+        lr=args.lr,
+        gamma=args.gamma,
+        entropy_coef=args.entropy_coef,
+        value_coef=args.value_coef,
+    )
     obs_dim = cfg.num_nodes * 4 + 1 + cfg.num_nodes
     act_dim = cfg.num_nodes + 1
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    global_model = ActorCriticNet(obs_dim, act_dim).to(device)
+    global_model = ActorCriticNet(obs_dim, act_dim, hidden_dim=args.hidden_dim).to(device)
     optimizer = torch.optim.RMSprop(
         global_model.parameters(),
         lr=a3c_cfg.lr,
@@ -263,6 +285,7 @@ def main() -> None:
                 stat_lock,
                 stats,
                 device,
+                args.hidden_dim,
             ),
             daemon=True,
         )
@@ -322,6 +345,8 @@ def main() -> None:
                 "seed": args.seed,
                 "total_steps": args.total_steps,
                 "log_file": str(log_file),
+                "a3c_config": asdict(a3c_cfg),
+                "network": {"hidden_dim": args.hidden_dim},
                 "log_schema": ["step", "algorithm", "reward", "loss", "epsilon", "beta", "replay_size"],
             },
             indent=2,

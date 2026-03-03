@@ -192,22 +192,26 @@ def train(args: argparse.Namespace) -> Path:
     # Single-step dispatch is closer to a contextual bandit than a long-horizon MDP.
     # Use bandit-friendly PPO hyperparameters for better stability/generalization.
     ppo_hyperparams = {
-        "learning_rate": 1e-4,
-        "gamma": 0.0,
-        "gae_lambda": 0.0,
-        "clip_range": 0.2,
-        "ent_coef": 0.03,
-        "vf_coef": 0.2,
-        "max_grad_norm": 0.5,
-        "n_steps": 512,
-        "batch_size": 128,
-        "n_epochs": 10,
-        "target_kl": 0.02,
+        "learning_rate": args.learning_rate,
+        "gamma": args.gamma,
+        "gae_lambda": args.gae_lambda,
+        "clip_range": args.clip_range,
+        "ent_coef": args.ent_coef,
+        "vf_coef": args.vf_coef,
+        "max_grad_norm": args.max_grad_norm,
+        "n_steps": args.n_steps,
+        "batch_size": args.batch_size,
+        "n_epochs": args.n_epochs,
+        "target_kl": args.target_kl,
+    }
+    policy_kwargs = {
+        "net_arch": [args.hidden_dim, args.hidden_dim],
     }
 
     model = MaskablePPO(
         policy="MlpPolicy",
         env=env,
+        policy_kwargs=policy_kwargs,
         verbose=1,
         seed=args.seed,
         **ppo_hyperparams,
@@ -237,6 +241,7 @@ def train(args: argparse.Namespace) -> Path:
         "total_timesteps": args.total_timesteps,
         "sim_config": asdict(cfg),
         "ppo_hyperparams": ppo_hyperparams,
+        "network": {"hidden_dim": args.hidden_dim},
     }
     (out_dir / "ppo_training_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
@@ -248,6 +253,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--total-timesteps", type=int, default=300_000)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-dir", type=str, default="experiments/topology_sim/models")
+    parser.add_argument("--learning-rate", type=float, default=1e-4)
+    parser.add_argument("--gamma", type=float, default=0.0)
+    parser.add_argument("--gae-lambda", type=float, default=0.0)
+    parser.add_argument("--clip-range", type=float, default=0.2)
+    parser.add_argument("--ent-coef", type=float, default=0.03)
+    parser.add_argument("--vf-coef", type=float, default=0.2)
+    parser.add_argument("--max-grad-norm", type=float, default=0.5)
+    parser.add_argument("--n-steps", type=int, default=512)
+    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--n-epochs", type=int, default=10)
+    parser.add_argument("--target-kl", type=float, default=0.02)
+    parser.add_argument("--hidden-dim", type=int, default=256)
     return parser.parse_args()
 
 
